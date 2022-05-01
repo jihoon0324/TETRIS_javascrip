@@ -15,13 +15,8 @@ let tempMovingItem;
 // 블럭의 타입과 정보 변수
 
 const Blocks = {
-  three: [
-    [
-      [0, 0],
-      [0, 1],
-      [1, 1],
-      [1, 0],
-    ],
+  tree: [
+      [[0, 0], [0, 1],[1, 1],[1, 0]],
     [],
     [],
     [],
@@ -79,5 +74,11 @@ function renderBlocks() {
    이런식으로 할수 있으나 코드가 복잡해지기 때문에 destructuring 을 이용 한다 */
   //destructuring
   const { type, direction, top, left } = tempMovingItem;
-  console.log(type, direction, top, left);
+ // console.log(type, direction, top, left);
+  Blocks[type][direction].forEach(block => {
+      const x=block[0];
+      const y =block[1];
+      const target = playground.childNodes;
+  });
+ 
 }
