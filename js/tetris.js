@@ -1,10 +1,10 @@
 //Dom
 const playground = document.querySelector(".playground >ul");
-//Setting
+//Setting   상수
 const Game_Rows = 20;
 const Game_Cols = 10;
 
-//variable
+//variable 변수 
 let score = 0;
 //drop speed
 let duration = 500;
@@ -16,18 +16,18 @@ let tempMovingItem;
 
 const Blocks = {
   tree: [
-      [[0, 0], [0, 1],[1, 1],[1, 0]],
+      [[2, 1], [0, 1],[1, 1],[1, 0]],
     [],
     [],
     [],
   ],
 };
-
+// javascript object
 const movingItem = {
   type: "tree",
   direction: 0,
   top: 0,
-  left: 0,
+  left: 3,
 };
 
 init();
@@ -76,9 +76,35 @@ function renderBlocks() {
   const { type, direction, top, left } = tempMovingItem;
  // console.log(type, direction, top, left);
   Blocks[type][direction].forEach(block => {
-      const x=block[0];
-      const y =block[1];
-      const target = playground.childNodes;
+      const x=block[0] +left;
+      const y =block[1] +top;
+   
+
+      const target = playground.childNodes[y].childNodes[0].childNodes[x];
+      //console.log(target); 
+      target.classList.add(type)
   });
  
 }
+// make move block
+function moveBlock(moveType , amount){
+  tempMovingItem[moveType] += amount;
+  renderBlocks()
+
+
+}
+//event handling
+document.addEventListener("keydown", e =>{
+
+  switch(e.keyCode){
+    case 39:
+      moveBlock("left",1);
+      break;
+      case 37:
+        moveBlock("left",-1); 
+break;
+
+  }
+
+
+})
