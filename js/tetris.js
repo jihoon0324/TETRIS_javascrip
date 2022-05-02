@@ -12,36 +12,7 @@ let duration = 500;
 let downInterval;
 //무빙아이템 실행전 잠시  담아 둠
 let tempMovingItem;
-// 블럭의 타입과 정보 변수
 
-const Blocks = {
-  tree: [
-    [
-      [2, 1],
-      [0, 1],
-      [1, 0],
-      [1, 1],
-    ],
-    [
-      [1, 2],
-      [0, 1],
-      [1, 0],
-      [1, 1],
-    ],
-    [
-      [1, 2],
-      [0, 1],
-      [2, 1],
-      [1, 1],
-    ],
-    [
-      [2, 1],
-      [1, 2],
-      [1, 0],
-      [1, 1],
-    ],
-  ],
-};
 // javascript object
 const movingItem = {
   type: "tree",
@@ -49,7 +20,164 @@ const movingItem = {
   top: 0,
   left: 0,
 };
-
+const Blocks = {
+  tree: [
+    [
+      [1, 0],
+      [0, 1],
+      [1, 1],
+      [2, 1],
+    ],
+    [
+      [1, 0],
+      [0, 1],
+      [1, 1],
+      [1, 2],
+    ],
+    [
+      [2, 1],
+      [0, 1],
+      [1, 1],
+      [1, 2],
+    ],
+    [
+      [2, 1],
+      [1, 2],
+      [1, 1],
+      [1, 0],
+    ],
+  ],
+  square: [
+    [
+      [0, 0],
+      [0, 1],
+      [1, 0],
+      [1, 1],
+    ],
+    [
+      [0, 0],
+      [0, 1],
+      [1, 0],
+      [1, 1],
+    ],
+    [
+      [0, 0],
+      [0, 1],
+      [1, 0],
+      [1, 1],
+    ],
+    [
+      [0, 0],
+      [0, 1],
+      [1, 0],
+      [1, 1],
+    ],
+  ],
+  bar: [
+    [
+      [1, 0],
+      [2, 0],
+      [3, 0],
+      [4, 0],
+    ],
+    [
+      [2, -1],
+      [2, 0],
+      [2, 1],
+      [2, 2],
+    ],
+    [
+      [1, 0],
+      [2, 0],
+      [3, 0],
+      [4, 0],
+    ],
+    [
+      [2, -1],
+      [2, 0],
+      [2, 1],
+      [2, 2],
+    ],
+  ],
+  zee: [
+    [
+      [0, 0],
+      [1, 0],
+      [1, 1],
+      [2, 1],
+    ],
+    [
+      [0, 1],
+      [1, 0],
+      [1, 1],
+      [0, 2],
+    ],
+    [
+      [0, 1],
+      [1, 1],
+      [1, 2],
+      [2, 2],
+    ],
+    [
+      [2, 0],
+      [2, 1],
+      [1, 1],
+      [1, 2],
+    ],
+  ],
+  elLeft: [
+    [
+      [0, 0],
+      [0, 1],
+      [1, 1],
+      [2, 1],
+    ],
+    [
+      [1, 0],
+      [1, 1],
+      [1, 2],
+      [0, 2],
+    ],
+    [
+      [0, 1],
+      [1, 1],
+      [2, 1],
+      [2, 2],
+    ],
+    [
+      [1, 0],
+      [2, 0],
+      [1, 1],
+      [1, 2],
+    ],
+  ],
+  elRight: [
+    [
+      [1, 0],
+      [2, 0],
+      [1, 1],
+      [1, 2],
+    ],
+    [
+      [0, 0],
+      [0, 1],
+      [1, 1],
+      [2, 1],
+    ],
+    [
+      [0, 2],
+      [1, 0],
+      [1, 1],
+      [1, 2],
+    ],
+    [
+      [0, 1],
+      [1, 1],
+      [2, 1],
+      [2, 2],
+    ],
+  ],
+}
 init();
 
 function init() {
@@ -97,12 +225,13 @@ function renderBlocks(moveType ="") {
   const movingBlocks = document.querySelectorAll(".moving");
   movingBlocks.forEach((moving) => {
     moving.classList.remove(type, "moving");
-  });
+  })
 
   // console.log(type, direction, top, left);
   Blocks[type][direction].some((block) => {
     const x = block[0] + left;
     const y = block[1] + top;
+    console.log(playground.childNodes[y])
     const target = playground.childNodes[y]
       ? playground.childNodes[y].childNodes[0].childNodes[x]
       : null;
@@ -129,10 +258,28 @@ function renderBlocks(moveType ="") {
   });
 }
 
-function seizeBlock() {}
+function seizeBlock() {
+  const movingBlocks= document.querySelectorAll(".moving");
+  movingBlocks.forEach((moving) => {
+    moving.classList.remove( "moving");
+    moving.classList.add( "seized");
+  })
+ generateNewBlock()
+
+
+}
+
+function  generateNewBlock(){
+  movingItem.top =0;
+  movingItem.left =3;
+  movingItem.direction =0;
+ tempMovingItem ={...movingItem};
+ renderBlocks()
+
+}
 
 function checkEmpty(target) {
-  if (!target) {
+  if (!target || target.classList.contains("seized")) {
     return false;
   }
   return true;
