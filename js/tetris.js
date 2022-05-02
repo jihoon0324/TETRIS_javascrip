@@ -4,7 +4,7 @@ const playground = document.querySelector(".playground >ul");
 const Game_Rows = 20;
 const Game_Cols = 10;
 
-//variable 변수 
+//variable 변수
 let score = 0;
 //drop speed
 let duration = 500;
@@ -16,7 +16,12 @@ let tempMovingItem;
 
 const Blocks = {
   tree: [
-      [[2, 1], [0, 1],[1, 1],[1, 0]],
+    [
+      [2, 1],
+      [0, 1],
+      [1, 1],
+      [1, 0],
+    ],
     [],
     [],
     [],
@@ -74,37 +79,38 @@ function renderBlocks() {
    이런식으로 할수 있으나 코드가 복잡해지기 때문에 destructuring 을 이용 한다 */
   //destructuring
   const { type, direction, top, left } = tempMovingItem;
- // console.log(type, direction, top, left);
-  Blocks[type][direction].forEach(block => {
-      const x=block[0] +left;
-      const y =block[1] +top;
-   
-
-      const target = playground.childNodes[y].childNodes[0].childNodes[x];
-      //console.log(target); 
-      target.classList.add(type)
+  const movingBlocks = document.querySelectorAll(".moving");
+  movingBlocks.forEach(moving => {
+    moving.classList.remove(type, "moving");
   });
- 
+
+  // console.log(type, direction, top, left);
+  Blocks[type][direction].forEach((block) => {
+    const x = block[0] + left;
+    const y = block[1] + top;
+    const target = playground.childNodes[y].childNodes[0].childNodes[x];
+    //console.log(target);
+    target.classList.add(type, "moving");
+  });
 }
 // make move block
-function moveBlock(moveType , amount){
+function moveBlock(moveType, amount) {
   tempMovingItem[moveType] += amount;
-  renderBlocks()
-
-
+  renderBlocks();
 }
 //event handling
-document.addEventListener("keydown", e =>{
-
-  switch(e.keyCode){
+document.addEventListener("keydown", (e) => {
+  switch (e.keyCode) {
     case 39:
-      moveBlock("left",1);
+      moveBlock("left", 1);
       break;
-      case 37:
-        moveBlock("left",-1); 
-break;
-
+    case 37:
+      moveBlock("left", -1);
+      break;
+      case 40:
+        moveBlock("top",1);
+        break;
+    default:
+      break;
   }
-
-
-})
+});
