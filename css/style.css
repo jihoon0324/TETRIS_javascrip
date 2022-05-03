@@ -44,5 +44,20 @@ body {
   outline: 1px solid #ccc;
 }
 .tree{
+  background: salmon;
+}
+.bar{
   background: #67c23a;
+}
+.zee{
+  background: #e6a23a;
+}
+.elLeft{
+  background: #8e448e;
+}
+.elRight{
+  background: #16a085;
+}
+.square{
+  background: #490b35;
 }

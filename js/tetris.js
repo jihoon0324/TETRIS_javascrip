@@ -16,7 +16,7 @@ let tempMovingItem;
 // javascript object
 const movingItem = {
   type: "tree",
-  direction: 1,
+  direction: 3,
   top: 0,
   left: 0,
 };
@@ -177,7 +177,7 @@ const Blocks = {
       [2, 2],
     ],
   ],
-}
+};
 init();
 
 function init() {
@@ -197,9 +197,9 @@ function init() {
 
   tempMovingItem = { ...movingItem };
   for (let i = 0; i < Game_Rows; i++) {
-    prependNewLine();
+    prependNewLine()
   }
-  renderBlocks();
+  renderBlocks()
 }
 
 function prependNewLine() {
@@ -211,10 +211,10 @@ function prependNewLine() {
   }
 
   li.prepend(ul);
-  playground.prepend(li);
+  playground.prepend(li)
 }
 
-function renderBlocks(moveType ="") {
+function renderBlocks(moveType = "") {
   /* 
     tempMovingItem.type;
     tempMovingItem.direction;
@@ -223,59 +223,59 @@ function renderBlocks(moveType ="") {
   //destructuring
   const { type, direction, top, left } = tempMovingItem;
   const movingBlocks = document.querySelectorAll(".moving");
-  movingBlocks.forEach((moving) => {
+  movingBlocks.forEach( moving => {
     moving.classList.remove(type, "moving");
   })
 
   // console.log(type, direction, top, left);
-  Blocks[type][direction].some((block) => {
+  Blocks[type][direction].some(block => {
     const x = block[0] + left;
     const y = block[1] + top;
-    console.log(playground.childNodes[y])
+    // console.log(playground.childNodes[y])
     const target = playground.childNodes[y]
       ? playground.childNodes[y].childNodes[0].childNodes[x]
       : null;
     const isAvailable = checkEmpty(target);
     if (isAvailable) {
-      //console.log(target);
+      console.log(target);
       target.classList.add(type, "moving");
     } else {
-      tempMovingItem = { ...movingItem };
-      setTimeout(() => {
-        renderBlocks();
-        if (moveType === "top") {
-          seizeBlock();
-        }
-        renderBlocks();
-
-      }, 0);
-      return true;
+      tempMovingItem = { ...movingItem }
+   setTimeout(()=>{
+  
+    renderBlocks()
+    if (moveType === "top") {
+      seizeBlock();
     }
 
-    movingItem.direction = direction;
-    movingItem.left = left;
-    movingItem.top = top;
-  });
+   },0)
+      return true;
+    }
+  })
+  movingItem.direction = direction;
+  movingItem.left = left;
+  movingItem.top = top;
 }
 
 function seizeBlock() {
-  const movingBlocks= document.querySelectorAll(".moving");
-  movingBlocks.forEach((moving) => {
-    moving.classList.remove( "moving");
-    moving.classList.add( "seized");
+  const movingBlocks = document.querySelectorAll(".moving");
+  movingBlocks.forEach(moving => {
+    moving.classList.remove("moving");
+    moving.classList.add("seized");
   })
- generateNewBlock()
-
-
+  generateNewBlock()
 }
 
-function  generateNewBlock(){
-  movingItem.top =0;
-  movingItem.left =3;
-  movingItem.direction =0;
- tempMovingItem ={...movingItem};
- renderBlocks()
+function generateNewBlock() {
+  const blockArray = Object.entries(Blocks);
+  const randomIndex = Math.floor(Math.random() * blockArray.length);
 
+  movingItem.type = blockArray[randomIndex][0];
+  movingItem.top = 0;
+  movingItem.left = 3;
+  movingItem.direction = 0;
+  tempMovingItem = { ...movingItem };
+  renderBlocks();
 }
 
 function checkEmpty(target) {
@@ -290,10 +290,12 @@ function moveBlock(moveType, amount) {
   tempMovingItem[moveType] += amount;
   renderBlocks(moveType);
 }
-function changeDirection(){
+function changeDirection() {
   const direction = tempMovingItem.direction;
-  direction === 3? tempMovingItem.direction=0: tempMovingItem.direction +=1 ;
-  renderBlocks()
+  direction === 3
+    ? (tempMovingItem.direction = 0)
+    : (tempMovingItem.direction += 1);
+  renderBlocks();
 }
 //event handling
 document.addEventListener("keydown", (e) => {
@@ -307,10 +309,10 @@ document.addEventListener("keydown", (e) => {
     case 40:
       moveBlock("top", 1);
       break;
-      case 38:
-        changeDirection()
-        break;
+    case 38:
+      changeDirection();
+      break;
     default:
       break;
   }
-});
+})
