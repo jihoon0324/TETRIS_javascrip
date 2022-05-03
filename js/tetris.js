@@ -1,5 +1,8 @@
 //Dom
 const playground = document.querySelector(".playground >ul");
+const gameText= document.querySelector(".game-text");
+const scoreDisplay =document.querySelector(".score");
+const restartButton= document.querySelector(".game-text > button");
 //Setting   상수
 const Game_Rows = 20;
 const Game_Cols = 10;
@@ -8,14 +11,13 @@ const Game_Cols = 10;
 let score = 0;
 //drop speed
 let duration = 500;
-
 let downInterval;
 //무빙아이템 실행전 잠시  담아 둠
 let tempMovingItem;
 
 // javascript object
 const movingItem = {
-  type: "tree",
+  type: "",
   direction: 3,
   top: 0,
   left: 0,
@@ -197,9 +199,9 @@ function init() {
 
   tempMovingItem = { ...movingItem };
   for (let i = 0; i < Game_Rows; i++) {
-    prependNewLine()
+    prependNewLine();
   }
-  renderBlocks()
+  generateNewBlock();
 }
 
 function prependNewLine() {
@@ -211,7 +213,7 @@ function prependNewLine() {
   }
 
   li.prepend(ul);
-  playground.prepend(li)
+  playground.prepend(li);
 }
 
 function renderBlocks(moveType = "") {
@@ -223,12 +225,12 @@ function renderBlocks(moveType = "") {
   //destructuring
   const { type, direction, top, left } = tempMovingItem;
   const movingBlocks = document.querySelectorAll(".moving");
-  movingBlocks.forEach( moving => {
+  movingBlocks.forEach((moving) => {
     moving.classList.remove(type, "moving");
-  })
+  });
 
   // console.log(type, direction, top, left);
-  Blocks[type][direction].some(block => {
+  Blocks[type][direction].some((block) => {
     const x = block[0] + left;
     const y = block[1] + top;
     // console.log(playground.childNodes[y])
@@ -237,21 +239,24 @@ function renderBlocks(moveType = "") {
       : null;
     const isAvailable = checkEmpty(target);
     if (isAvailable) {
-      console.log(target);
+ 
       target.classList.add(type, "moving");
     } else {
-      tempMovingItem = { ...movingItem }
-   setTimeout(()=>{
-  
-    renderBlocks()
-    if (moveType === "top") {
-      seizeBlock();
-    }
-
-   },0)
+      tempMovingItem = { ...movingItem };
+      // if no more room for empty line(?) 끝 줄에 다다랐을때 
+      if(moveType === 'retry'){
+        clearInterval(downInterval)
+        showGameOverText()
+      }
+      setTimeout(() => {
+        renderBlocks('retry');
+        if (moveType === "top") {
+          seizeBlock();
+        }
+      }, 0);
       return true;
     }
-  })
+  });
   movingItem.direction = direction;
   movingItem.left = left;
   movingItem.top = top;
@@ -259,14 +264,42 @@ function renderBlocks(moveType = "") {
 
 function seizeBlock() {
   const movingBlocks = document.querySelectorAll(".moving");
-  movingBlocks.forEach(moving => {
+  movingBlocks.forEach((moving) => {
     moving.classList.remove("moving");
     moving.classList.add("seized");
-  })
-  generateNewBlock()
+  });
+  checkMatch();
 }
+// if full one line remove
+function checkMatch() {
+  const childNodes = playground.childNodes;
+  childNodes.forEach((child) => {
+    let matched = true;
+    child.childNodes[0].childNodes.forEach((li) => {
+      if (!li.classList.contains("seized")) {
+        matched = false;
+      }
+    });
+    if(matched){
+      child.remove();
+      prependNewLine()
+      score ++;
+      scoreDisplay.innerText =score;
+    }
+  });
 
+  generateNewBlock();
+}
+// make new block
 function generateNewBlock() {
+  clearInterval(downInterval);
+  downInterval = setInterval(
+    () => {
+      moveBlock("top", 1);
+    },
+
+    duration
+  );
   const blockArray = Object.entries(Blocks);
   const randomIndex = Math.floor(Math.random() * blockArray.length);
 
@@ -297,6 +330,19 @@ function changeDirection() {
     : (tempMovingItem.direction += 1);
   renderBlocks();
 }
+// space bar drop function
+function dorpBlock() {
+  clearInterval(downInterval);
+  downInterval = setInterval(() => {
+    moveBlock("top", 1);
+  }, 10);
+}
+
+function showGameOverText(){
+ gameText.style.display ="flex";
+}
+
+
 //event handling
 document.addEventListener("keydown", (e) => {
   switch (e.keyCode) {
@@ -312,7 +358,16 @@ document.addEventListener("keydown", (e) => {
     case 38:
       changeDirection();
       break;
+    case 32:
+      dorpBlock();
+      break;
     default:
       break;
   }
+});
+restartButton.addEventListener("click",() =>{
+playground.innerHTML ="";
+gameText.style.display="none";
+init();
+
 })
