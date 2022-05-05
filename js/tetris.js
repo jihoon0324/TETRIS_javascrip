@@ -22,6 +22,7 @@ const movingItem = {
   top: 0,
   left: 0,
 };
+// 블럭 표현 할때 
 const Blocks = {
   tree: [
     [
